@@ -258,6 +258,12 @@ tasks.named('jacocoTestCoverageVerification') {
     }
 }
 
+tasks.register('coverage') {
+    group = 'verification'
+    description = 'Runs tests, generates JaCoCo report, and verifies minimum coverage threshold.'
+    dependsOn tasks.named('jacocoTestCoverageVerification')
+}
+
 tasks.named('check') {
     dependsOn tasks.named('jacocoTestCoverageVerification')
 }
