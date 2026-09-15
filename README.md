@@ -1,2 +1,123 @@
-# gradle-antlr-tsql-plugin-
-MSSQL Transact SQL
+# Gradle ANTLR T-SQL Plugin
+
+![Conformance](https://img.shields.io/badge/Conformance-Check--All%20Passing-brightgreen)
+
+[![Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/name.jurgenei.gradle.antlr.tsql?label=Plugin%20Portal)](https://plugins.gradle.org/plugin/name.jurgenei.gradle.antlr.tsql)
+[![Build and Test](https://github.com/jurgenei/gradle-antlr-tsql-plugin/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/jurgenei/gradle-antlr-tsql-plugin/actions/workflows/ci.yml?query=branch%3Amain)
+[![Coverage CI](https://github.com/jurgenei/gradle-antlr-tsql-plugin/actions/workflows/coverage.yml/badge.svg?branch=main)](https://github.com/jurgenei/gradle-antlr-tsql-plugin/actions/workflows/coverage.yml?query=branch%3Amain)
+[![Coverage](https://codecov.io/gh/jurgenei/gradle-antlr-tsql-plugin/graph/badge.svg?branch=main)](https://app.codecov.io/gh/jurgenei/gradle-antlr-tsql-plugin?branch=main)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Java](https://img.shields.io/badge/java-21+-green.svg)](https://www.oracle.com/java/)
+[![Gradle](https://img.shields.io/badge/gradle-8+-blue.svg)](https://gradle.org/)
+
+`gradle-antlr-tsql-plugin` provides preconfigured XML AST task support for T-SQL parsing workflows.
+
+It builds on `name.jurgenei.gradle.antlr` and offers task defaults tailored for `TSqlLexer`/`TSqlParser` use cases.
+
+## Source Grammar
+
+This plugin vendors ANTLR grammars from:
+
+- https://github.com/antlr/grammars-v4/tree/master/sql/tsql
+
+Included grammar files:
+
+- `src/main/antlr/name/jurgenei/parsers/TSqlLexer.g4`
+- `src/main/antlr/name/jurgenei/parsers/TSqlParser.g4`
+
+## Use Cases
+
+- Convert large T-SQL corpora to XML AST for lineage extraction
+- Validate parser compatibility in CI against SQL fixtures
+- Run parser checks with sensible defaults and minimal Gradle setup
+- Keep conversion as first-class Gradle tasks (repeatable and automatable)
+
+## Install
+
+```groovy
+plugins {
+	id 'name.jurgenei.gradle.antlr.tsql' version '0.1.0'
+}
+```
+
+Plugin Portal page: https://plugins.gradle.org/plugin/name.jurgenei.gradle.antlr.tsql
+
+## What Plugin Adds
+
+- `XmlAstTsqlGradleTask` task type
+- `tsqlXmlAst` pre-registered task
+- Runtime classpath and `classes` dependency wiring when `java` plugin present
+
+Default task conventions:
+
+- `grammar = tsql`
+- `parserClassName = name.jurgenei.parsers.TSqlParser`
+- `lexerClassName = name.jurgenei.parsers.TSqlLexer`
+- `startRule = tsql_file`
+- `includes = ['**/*.sql']`
+
+## Quick Start
+
+```groovy
+plugins {
+	id 'java'
+	id 'name.jurgenei.gradle.antlr.tsql' version '0.1.0'
+}
+
+tasks.named('tsqlXmlAst', name.jurgenei.gradle.antlr.XmlAstTsqlGradleTask) {
+	sourceDirectory.set(layout.projectDirectory.dir('src/test/resources/tsql'))
+	destinationDirectory.set(layout.buildDirectory.dir('xmlast-tsql'))
+	targetExtension.set('.xml')
+	continueOnError.set(true)
+}
+```
+
+S-expression output variant:
+
+```groovy
+tasks.named('tsqlXmlAst', name.jurgenei.gradle.antlr.XmlAstTsqlGradleTask) {
+	targetExtension.set('.sexpr')
+	sexprFormat.set('beautified')
+}
+```
+
+- `targetExtension`: `.xml` (default) or `.sexpr`
+- `sexprFormat`: `compact` (default) or `beautified`
+
+Run:
+
+```bash
+./gradlew tsqlXmlAst
+```
+
+## Common Workflow
+
+```bash
+./gradlew clean check tsqlXmlAst
+```
+
+Supporting tasks used in repository:
+
+- `generateLexerSources`
+- `generateParserSources`
+- `compileAntlrSources`
+- `verifyGrammarSources`
+- `xmlast` (wrapper task for sample conversion)
+
+## Development
+
+```bash
+./gradlew clean test
+./gradlew publishToMavenLocal
+```
+
+## Troubleshooting
+
+- `ClassNotFoundException` for parser/lexer classes:
+  - Ensure `compileAntlrSources` ran
+  - Ensure runtime classpath includes generated classes
+- Parse starts but no output files:
+  - Verify `sourceDirectory` and `includes`
+  - Set `force = true` for full pass
+- Start rule issues:
+  - Confirm parser entry method exists (default `tsql_file`)

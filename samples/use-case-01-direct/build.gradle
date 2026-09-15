@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+    id 'antlr'
+    id 'name.jurgenei.gradle.antlr'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    antlr 'org.antlr:antlr4:4.13.2'
+    implementation 'org.antlr:antlr4-runtime:4.13.2'
+    implementation rootProject
+}
+
+tasks.named('xmlast', name.jurgenei.gradle.antlr.XmlAstGradleTask) {
+    dependsOn rootProject.tasks.named('compileAntlrSources')
+    sourceDirectory.set(rootProject.layout.projectDirectory.dir('src/test/resources/tsql'))
+    destinationDirectory.set(layout.buildDirectory.dir('xmlast-samples'))
+
+    parserClassName.set('name.jurgenei.parsers.TSqlParser')
+    lexerClassName.set('name.jurgenei.parsers.TSqlLexer')
+    startRule.set('tsql_file')
+
+    includes.set(['**/*.sql'])
+    targetExtension.set('.xml')
+
+    runtimeClasspath.from(
+        configurations.runtimeClasspath,
+        rootProject.layout.buildDirectory.dir('classes/java/antlr')
+    )
+}
+
