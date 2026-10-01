@@ -16,7 +16,7 @@ public class XmlAstTsqlPluginTest {
 
         final Object task = project.getTasks().getByName("tsqlXmlAst");
         Assert.assertNotNull(task);
-        XmlAstTsqlGradleTask.class.cast(task);
+        (XmlAstTsqlGradleTask) task;
     }
 
     @Test
@@ -26,7 +26,7 @@ public class XmlAstTsqlPluginTest {
 
         new XmlAstTsqlPlugin().apply(project);
 
-        final XmlAstTsqlGradleTask task = XmlAstTsqlGradleTask.class.cast(project.getTasks().getByName("tsqlXmlAst"));
+        final XmlAstTsqlGradleTask task = (XmlAstTsqlGradleTask) project.getTasks().getByName("tsqlXmlAst");
         Assert.assertEquals("tsql", task.getGrammar().get());
         Assert.assertEquals("name.jurgenei.parsers.TSqlParser", task.getParserClassName().get());
         Assert.assertEquals("name.jurgenei.parsers.TSqlLexer", task.getLexerClassName().get());
@@ -43,7 +43,7 @@ public class XmlAstTsqlPluginTest {
 
         new XmlAstTsqlPlugin().apply(project);
 
-        final XmlAstTsqlGradleTask task = XmlAstTsqlGradleTask.class.cast(project.getTasks().getByName("tsqlXmlAst"));
+        final XmlAstTsqlGradleTask task = (XmlAstTsqlGradleTask) project.getTasks().getByName("tsqlXmlAst");
         task.getTargetExtension().set(".sexpr");
         task.getSexprFormat().set("beautified");
 
