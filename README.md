@@ -76,13 +76,13 @@ S-expression output variant:
 
 ```groovy
 tasks.named('tsqlXmlAst', name.jurgenei.gradle.antlr.XmlAstTsqlGradleTask) {
-	targetExtension.set('.sexpr')
-	sexprFormat.set('beautified')
+	targetExtension.set('.xir')
+	xirFormat.set('beautified')
 }
 ```
 
-- `targetExtension`: `.xml` (default) or `.sexpr`
-- `sexprFormat`: `compact` (default) or `beautified`
+- `targetExtension`: `.xml` (default) or `.xir`
+- `xirFormat`: `compact` (default) or `beautified`
 
 Run:
 

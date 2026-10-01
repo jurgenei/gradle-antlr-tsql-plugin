@@ -16,7 +16,7 @@ public class XmlAstTsqlPluginTest {
 
         final Object task = project.getTasks().getByName("tsqlXmlAst");
         Assert.assertNotNull(task);
-        XmlAstTsqlGradleTask.class.cast(task);
+        Assert.assertTrue(task instanceof XmlAstTsqlGradleTask);
     }
 
     @Test
@@ -26,29 +26,28 @@ public class XmlAstTsqlPluginTest {
 
         new XmlAstTsqlPlugin().apply(project);
 
-        final XmlAstTsqlGradleTask task = XmlAstTsqlGradleTask.class.cast(project.getTasks().getByName("tsqlXmlAst"));
+        final XmlAstTsqlGradleTask task = (XmlAstTsqlGradleTask) project.getTasks().getByName("tsqlXmlAst");
         Assert.assertEquals("tsql", task.getGrammar().get());
         Assert.assertEquals("name.jurgenei.parsers.TSqlParser", task.getParserClassName().get());
         Assert.assertEquals("name.jurgenei.parsers.TSqlLexer", task.getLexerClassName().get());
         Assert.assertEquals("tsql_file", task.getStartRule().get());
         Assert.assertTrue(task.getIncludes().get().contains("**/*.sql"));
         Assert.assertEquals(".xml", task.getTargetExtension().get());
-        Assert.assertEquals("compact", task.getSexprFormat().get());
+        Assert.assertEquals("compact", task.getXirFormat().get());
     }
 
     @Test
-    public void supportsSexprOutputConfiguration() {
+    public void supportsXirOutputConfiguration() {
         final Project project = ProjectBuilder.builder().build();
         project.getPluginManager().apply("java");
 
         new XmlAstTsqlPlugin().apply(project);
 
-        final XmlAstTsqlGradleTask task = XmlAstTsqlGradleTask.class.cast(project.getTasks().getByName("tsqlXmlAst"));
-        task.getTargetExtension().set(".sexpr");
-        task.getSexprFormat().set("beautified");
+        final XmlAstTsqlGradleTask task = (XmlAstTsqlGradleTask) project.getTasks().getByName("tsqlXmlAst");
+        task.getTargetExtension().set(".xir");
+        task.getXirFormat().set("beautified");
 
-        Assert.assertEquals(".sexpr", task.getTargetExtension().get());
-        Assert.assertEquals("beautified", task.getSexprFormat().get());
+        Assert.assertEquals(".xir", task.getTargetExtension().get());
+        Assert.assertEquals("beautified", task.getXirFormat().get());
     }
 }
-
