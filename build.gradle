@@ -213,6 +213,10 @@ tasks.named('jar', org.gradle.api.tasks.bundling.Jar) {
     }
 }
 
+tasks.named('sourcesJar', org.gradle.api.tasks.bundling.Jar) {
+    duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.EXCLUDE
+}
+
 tasks.withType(Test).configureEach {
     useJUnit()
 }
@@ -320,4 +324,3 @@ tasks.register('xml-ast-tsql', XmlAstGradleTask) {
 tasks.named('check') {
     dependsOn tasks.named('xmlast')
 }
-
