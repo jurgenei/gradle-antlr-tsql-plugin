@@ -50,7 +50,7 @@ public class XmlAstTsqlPluginFunctionalTest {
                         println "lexerClassName=${t.lexerClassName.get()}"
                         println "startRule=${t.startRule.get()}"
                         println "targetExtension=${t.targetExtension.get()}"
-                        println "sexprFormat=${t.sexprFormat.get()}"
+                        println "xirFormat=${t.xirFormat.get()}"
                     }
                 }
                 """);
@@ -63,12 +63,12 @@ public class XmlAstTsqlPluginFunctionalTest {
         Assert.assertTrue(output.contains("lexerClassName=name.jurgenei.parsers.TSqlLexer"));
         Assert.assertTrue(output.contains("startRule=tsql_file"));
         Assert.assertTrue(output.contains("targetExtension=.xml"));
-        Assert.assertTrue(output.contains("sexprFormat=compact"));
+        Assert.assertTrue(output.contains("xirFormat=compact"));
     }
 
     @Test
-    public void supportsSexprOutputConfiguration() throws Exception {
-        final File projectDir = temporaryFolder.newFolder("functional-tsql-sexpr-overrides");
+    public void supportsXirOutputConfiguration() throws Exception {
+        final File projectDir = temporaryFolder.newFolder("functional-tsql-xir-overrides");
         writeSettings(projectDir);
         writeBuildFile(projectDir, """
                 plugins {
@@ -77,24 +77,24 @@ public class XmlAstTsqlPluginFunctionalTest {
                 }
 
                 tasks.named('tsqlXmlAst', name.jurgenei.gradle.antlr.XmlAstTsqlGradleTask) {
-                    targetExtension.set('.sexpr')
-                    sexprFormat.set('beautified')
+                    targetExtension.set('.xir')
+                    xirFormat.set('beautified')
                 }
 
-                tasks.register('printTsqlSexprDefaults') {
+                tasks.register('printTsqlXirDefaults') {
                     doLast {
                         def t = tasks.named('tsqlXmlAst').get()
                         println "targetExtension=${t.targetExtension.get()}"
-                        println "sexprFormat=${t.sexprFormat.get()}"
+                        println "xirFormat=${t.xirFormat.get()}"
                     }
                 }
                 """);
 
-        final BuildResult result = run(projectDir, "printTsqlSexprDefaults");
+        final BuildResult result = run(projectDir, "printTsqlXirDefaults");
         final String output = result.getOutput();
 
-        Assert.assertTrue(output.contains("targetExtension=.sexpr"));
-        Assert.assertTrue(output.contains("sexprFormat=beautified"));
+        Assert.assertTrue(output.contains("targetExtension=.xir"));
+        Assert.assertTrue(output.contains("xirFormat=beautified"));
     }
 
     private static BuildResult run(final File projectDir, final String... args) {
